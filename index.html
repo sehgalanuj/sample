@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Navomi Test Exercises</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+  <!-- The style section below customizes the colors and spacing
+  within bootstrap.js. These CSS styles can be applied in the HTML by
+  adding them to the class attribute of div.-->
+  <style>
+    .bg-1 {
+      background-color: #14088C;
+      /* Blue */
+      color: #ffffff;
+    }
+
+    .panel-default>.panel-heading-custom {
+      background-color: #E7E7F0;
+      /* Light Blue */
+    }
+
+    .h3 {
+      border-bottom: 1px solid;
+    }
+
+    .jumbotron {
+      padding-bottom: 9px;
+      padding-top: 9px;
+      margin: 10px 0 10px;
+    }
+
+    .page-header {
+      border-color: #000000;
+    }
+
+    .extra-pad {
+      padding-top: 0px;
+      padding-right: 0px;
+      margin-top: 0px;
+      margin-left: 10%;
+      margin-right: 10%;
+      margin-bottom: 40px;
+    }
+
+    .gap-right {
+      margin-right: 10px;
+    }
+
+    .gap-left {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+
+<!-- The main HTML page body starts here -->
+
+<body>
+
+  <!-- SEC1 - This section is the blue background header that you see
+  in the webpage. It is a mainly a bootstrap.js container-fluid, which
+  further contains the bootstrap.js jumbotron with centered text and
+  dark blue background for both divs. -->
+  <div class="container-fluid bg-1">
+    <div class="jumbotron text-center bg-1">
+      <h1>Navomi Test Exercises</h1>
+      <p>Solution for exercises 3 and 4</p>
+    </div>
+  </div>
+  <!-- container-fluid / SEC1 -->
+
+  <!-- SEC2 - This section now contains the content of the page. Once
+  again, a bootstrap container-fluid is used to house the main
+  data. This is followed by another div housing to give some extra
+  padding so that the content is somewhat centered on the page.-->
+  <div class="container-fluid">
+    <div class="extra-pad">
+      <!-- The title of the page comes within bootstrap page-header. -->
+      <div class="page-header">
+        <h3>Test your disposition</h3>
+      </div>
+
+      <!-- The textual content of the page, still nested within the
+      container-fluid. The text is justified.-->
+      <div class="text-justify">
+        <p>Enter some text below and click submit. Our emotion engine will then deduce what your current emotional disposition is, i.e. whether you are in a positive, negative or neutral emotional state.</P>
+        <p>Based on the text you enter, your disposition will be shown. If any interesting subjects are found, information about them will be shown too.</p>
+      </div>
+    </div>
+  </div>
+  <!-- container-fluid / SEC2 -->
+
+
+  <!-- SEC3 - The scope of the angular app begins here. Everything
+  within this div (SEC3) will be part of the angular app's scope. It
+  uses an app named `formApp`, which has a controller named
+  `formController` inside it. -->
+  <div ng-app="formApp" ng-controller="formController">
+
+    <!-- SEC4 - All content is once again put inside a bootstrap
+    container-fluid. -->
+    <div class="container-fluid">
+
+      <!-- SEC5 - This is the first panel that shows the question,
+      form and submit button. Bootstrap is used for all the
+      styling. Extra padding is added to make sure that the content is
+      aligned the same way as the rest of the content on the page.-->
+      <div class="extra-pad panel panel-default">
+        <div class="panel-heading">
+          <h4>What are you thinking?</h4>
+        </div>
+
+        <div class="panel-body">
+          <!-- The form does not submit to a webpage. It instead makes
+	  a call to the processForm() function, which is defined as
+	  part of the Angular app, i.e. formApp, within the
+	  formController scope. -->
+          <form ng-submit="processForm()">
+            <div class="form-group">
+              <div class="col-sm-6">
+                <!-- The ng-model attribute is used to associate an Angular variable with the input textbox -->
+                <input ng-model="data.formData.thought" class="form-control" type="text" id="thought" name="thought" placeholder="Input some statement here.">
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+      <!-- first panel / SEC5-->
+
+      <!-- This is a progress bar that shows when data is being
+      retrieved. The ng-show attribute is used to set a condition when
+      this div should be displayed. In this case, only when the
+      `data.showprogress` variable is set to true. The progress bar is
+      from bootstrap and its progress values are assocated to the
+      variable `data.value`. -->
+      <div class="progress extra-pad" ng-show="data.showprogress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{data.value}}" aria-valuemin="0" aria-valuemax="100" style="width: {{data.value}}%"></div>
+      </div>
+
+      <!-- SEC6 - This is the second panel, which shows the result. It
+      is only displayed when the `data.value` variable is set to a
+      value greater than 100. -->
+      <div class="extra-pad panel panel-default" ng-show="data.value > 100">
+        <div class="panel-heading panel-heading-custom">
+          <h4>Response</h4>
+        </div>
+        <div class="panel-body">
+          <p>{{ data.formResponse }}
+            <!-- Contents of `data.formResponse` variable get written here. -->
+          </p>
+          <p>
+            <!-- Show information based on number of entities returned. -->
+            <div ng-if="data.response.entities.length == 1">
+              Since you are interested in {{data.response.entities[0].name}}, here is more information on the subject:
+            </div>
+            <div ng-if="data.response.entities.length > 1">
+              Looks like you are also interested in <span ng-repeat="person in data.response.entities">{{person.name}}{{$last ? '' : ', '}}</span>. Here is more information on these subjects:
+            </div>
+            <!-- SEC7 - An angular loop to print information on all entities returned. -->
+            <div ng-repeat="pic in data.response.entities" ng-if="data.response.entities.length > 0">
+              <div class="row gap-left gap-right">
+                <div class="col">
+                  <br><img class="img-thumbnail pull-left gap-right" src="{{pic.img}}" />
+                </div>
+                <div class="col text-justify">
+                  {{pic.details}}
+                  <a href="{{pic.url}}" target="_blank">Read More</a>
+                </div>
+              </div>
+            </div>
+            <!-- ng-repeat / SEC7 -->
+          </p>
+        </div>
+      </div>
+      <!-- second-panel / SEC6 -->
+
+      <!--{{ data }}-->
+    </div>
+    <!-- container-fluid/ SEC4 -->
+  </div>
+  <!-- ng-app="formApp" / SEC3 -->
+
+  <script>
+    angular.module("formApp", [])
+      .controller("formController", function($scope, $http, $timeout) {
+        //Default data object for the Angular scope. Using an object
+        //is important since asynchronous calls can cause loss of
+        //variable scope. If an object is used, like $scope.data.<variable>
+        //then correct scoping is always maintained
+        $scope.data = {
+          formData: null,
+          formResponse: null,
+          value: 0,
+          showprogress: false,
+          response: null,
+          names: null
+        };
+
+        //Function to process the form submission
+        $scope.processForm = function() {
+          //Variables to control the progress bar and data shown on screen
+          $scope.formResponse = null;
+          $scope.data.value = 0;
+          $scope.data.showprogress = true;
+
+          //Timeouts are being used to control the display of the progress
+          //bar. Without these it disappears too quickly
+          $timeout(function() {
+            $scope.data.value = 35;
+
+            //Make a call to the analysis script with the string entered by user
+            $http.get("analysis.py?thought=" + $scope.data.formData.thought)
+              .then(function(response) {
+                $scope.data.value = 70;
+
+                $timeout(function() {
+                  //Set the response received back from analysis.py
+                  $scope.data.value = 100;
+                  $scope.data.response = response.data;
+                  $scope.data.formResponse = response.data.response;
+                  $scope.data.names = response.data.response.entities;
+
+                  $timeout(function() {
+                    $scope.data.value = 110;
+                    $scope.data.showprogress = false;
+                  }, 1000)
+                }, 100)
+              })
+          }, 50)
+        };
+      });
+  </script>
+</body>
+
+</html>
